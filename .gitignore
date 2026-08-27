@@ -1,0 +1,9 @@
+@"
+.env
+.env.local
+__pycache__/
+node_modules/
+.next/
+.venv/
+venv/
+"@ | Out-File -FilePath .gitignore -Encoding utf8
