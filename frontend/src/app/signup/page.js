@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function SignupPage() {
   const [name, setName] = useState("");
@@ -9,6 +11,8 @@ export default function SignupPage() {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("student");
   const [error, setError] = useState("");
+  const { login } = useAuth();
+  const router = useRouter();
 
   function isValidStudentEmail(emailValue) {
     return emailValue.toLowerCase().includes(".edu");
@@ -25,7 +29,8 @@ export default function SignupPage() {
 
     // MOCKED: real flow calls POST /auth/signup { name, email, password, role }
     console.log("signup_request:", { name, email, password, role });
-    alert("Signup submitted (backend not connected yet). Check console.");
+    login({ name, email, role });
+    router.push(role === "tutor" ? "/dashboard/tutor" : "/dashboard/student");
   }
 
   const canSubmit = name && email && password;

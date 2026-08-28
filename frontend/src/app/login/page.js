@@ -2,16 +2,23 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { login } = useAuth();
+  const router = useRouter();
 
   function handleSubmit(e) {
     e.preventDefault();
     // MOCKED: real flow calls POST /auth/login { email, password }
     console.log("login_request:", { email, password });
-    alert("Login submitted (backend not connected yet). Check console.");
+    // NOTE: since backend doesn't exist yet, we can't know the real role/name here -
+    // defaulting to student for now until real auth returns actual user data
+    login({ name: email.split("@")[0], email, role: "student" });
+    router.push("/dashboard/student");
   }
 
   const canSubmit = email && password;
