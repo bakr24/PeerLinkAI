@@ -1,25 +1,18 @@
 # Design System
 
 ## Colors
-
-- Primary: TBD
-- Secondary: TBD
-- Success: verified status
-- Warning: weak-topic status
-- Neutral: grays
+- Primary: #16A34A (green-600)
+- Secondary: #1E293B (slate-800)
+- Success: #22C55E (green-500) — verified status
+- Warning: #F59E0B (amber-500) — weak-topic status
+- Neutral: Tailwind gray scale (gray-50 to gray-900)
 
 ## Typography
-
-- Heading font
-- Body font
-- Small
-- Base
-- Large
+- Font: system-ui stack (no external font loading, zero load time)
+- Small: 14px | Base: 16px | Large: 20px
 
 ## Spacing
-
 Use:
-
 - 4px
 - 8px
 - 16px
@@ -27,17 +20,11 @@ Use:
 - 32px
 
 ## Border Radius
-
-Use one consistent radius for:
-
-- Cards
-- Buttons
-- Inputs
+- 8px (rounded-lg) — consistent across cards, buttons, inputs
 
 ## Components
 
 ### Button
-
 Variants:
 - Primary
 - Secondary
@@ -50,7 +37,6 @@ States:
 - Loading
 
 ### Tutor Card
-
 Variants:
 - Verified
 - Unverified
@@ -61,15 +47,11 @@ States:
 - Selected
 
 ### Match Reason
-
 AI-generated recommendation explanation.
-
 Example:
-
 "Great match for visual learners"
 
 ### Quiz Question Card
-
 States:
 - Unanswered
 - Answered
@@ -77,15 +59,11 @@ States:
 - Incorrect
 
 ### Score Screen
-
 States:
 - Pass
 - Fail
 
 ## Rules
-
 Reuse components.
-
 Do not hardcode spacing or colors separately on individual pages.
-
 Tutor search cards and tutor profile cards should use the same underlying card design.
