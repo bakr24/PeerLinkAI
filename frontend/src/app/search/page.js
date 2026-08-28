@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 // MOCKED: real data comes from GET /search?q=<query>&student_id=... -> recommend_tutors()
 const mockTutors = [
@@ -78,8 +79,10 @@ export default function SearchPage() {
             </p>
 
             {mockTutors.map((tutor) => (
-              <div key={tutor.id} className="rounded-default border border-zinc-200 p-5 hover:border-primary transition-colors">
-                <div className="flex items-start justify-between">
+  <Link key={tutor.id} href={`/tutor/${tutor.id}`} className="block rounded-default border border-zinc-200 p-5 hover:border-primary transition-colors">
+    
+    
+    <div className="flex items-start justify-between">
                   <div>
                     <div className="flex items-center gap-2">
                       <h2 className="font-semibold text-secondary text-lg">{tutor.name}</h2>
@@ -101,7 +104,7 @@ export default function SearchPage() {
                 <div className="mt-4 inline-block rounded-full bg-green-50 px-3 py-1">
                   <span className="text-sm font-medium text-primary">{tutor.matchReason}</span>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
