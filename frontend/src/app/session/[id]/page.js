@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, use } from "react";
+import Button from "@/components/Button";
+
 
 // MOCKED: real questions come from POST /session/:id/complete -> generate_quiz()
 const mockPostSessionQuiz = [
@@ -68,12 +70,9 @@ export default function SessionPage({ params }) {
             <p className="mt-4 text-zinc-600">
               Once your session with the tutor is finished, mark it complete to get a quick knowledge check.
             </p>
-            <button
-              onClick={handleCompleteSession}
-              className="mt-6 rounded-default bg-primary px-6 py-3 font-medium text-white hover:bg-green-700"
-            >
+                        <Button onClick={handleCompleteSession} className="mt-6">
               Mark Session Complete
-            </button>
+            </Button>
           </div>
         )}
 
@@ -105,17 +104,9 @@ export default function SessionPage({ params }) {
               ))}
             </div>
 
-            <button
-              onClick={handleSubmitQuiz}
-              disabled={!allAnswered}
-              className={
-                allAnswered
-                  ? "mt-8 w-full rounded-default bg-primary px-6 py-3 font-medium text-white hover:bg-green-700"
-                  : "mt-8 w-full rounded-default bg-zinc-300 px-6 py-3 font-medium text-white cursor-not-allowed"
-              }
-            >
+                      <Button onClick={handleSubmitQuiz} disabled={!allAnswered} className="mt-8 w-full">
               Submit Answers
-            </button>
+            </Button>
           </div>
         )}
 

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Button from "@/components/Button";
 
 const subjects = ["Mathematics", "Physics", "Computer Science", "English", "Chemistry"];
 
@@ -78,18 +79,9 @@ export default function BecomeTutorPage() {
                 className="w-full rounded-default border border-zinc-300 px-4 py-3"
               />
             </div>
-
-            <button
-              onClick={handleApply}
-              disabled={!subject || !bio}
-              className={
-                subject && bio
-                  ? "rounded-default bg-primary px-6 py-3 font-medium text-white hover:bg-green-700"
-                  : "rounded-default bg-zinc-300 px-6 py-3 font-medium text-white cursor-not-allowed"
-              }
-            >
+                      <Button onClick={handleApply} disabled={!subject || !bio}>
               Continue to Qualification Quiz
-            </button>
+            </Button>
           </div>
         )}
 
@@ -122,17 +114,9 @@ export default function BecomeTutorPage() {
               ))}
             </div>
 
-            <button
-              onClick={handleSubmitQuiz}
-              disabled={!allAnswered}
-              className={
-                allAnswered
-                  ? "mt-8 w-full rounded-default bg-primary px-6 py-3 font-medium text-white hover:bg-green-700"
-                  : "mt-8 w-full rounded-default bg-zinc-300 px-6 py-3 font-medium text-white cursor-not-allowed"
-              }
-            >
+                        <Button onClick={handleSubmitQuiz} disabled={!allAnswered} className="mt-8 w-full">
               Submit Quiz
-            </button>
+            </Button>
           </div>
         )}
 

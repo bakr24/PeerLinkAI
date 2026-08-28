@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Button from "@/components/Button";
 
 // MOCKED: real data comes from GET /search?q=<query>&student_id=... -> recommend_tutors()
 const mockTutors = [
@@ -59,17 +60,9 @@ export default function SearchPage() {
             placeholder="e.g. Calculus, need visual step-by-step help"
             className="flex-1 rounded-default border border-zinc-300 px-4 py-3"
           />
-          <button
-            type="submit"
-            disabled={!query}
-            className={
-              query
-                ? "rounded-default bg-primary px-6 py-3 font-medium text-white hover:bg-green-700"
-                : "rounded-default bg-zinc-300 px-6 py-3 font-medium text-white cursor-not-allowed"
-            }
-          >
+                    <Button type="submit" disabled={!query}>
             Search
-          </button>
+          </Button>
         </form>
 
         {hasSearched && (
