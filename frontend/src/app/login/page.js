@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import Button from "@/components/Button";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -52,17 +53,9 @@ export default function LoginPage() {
             />
           </div>
 
-          <button
-            type="submit"
-            disabled={!canSubmit}
-            className={
-              canSubmit
-                ? "mt-2 rounded-default bg-primary px-6 py-3 font-medium text-white hover:bg-green-700"
-                : "mt-2 rounded-default bg-zinc-300 px-6 py-3 font-medium text-white cursor-not-allowed"
-            }
-          >
+                    <Button type="submit" disabled={!canSubmit} className="mt-2 w-full">
             Log In
-          </button>
+          </Button>
         </form>
 
         <p className="mt-6 text-center text-sm text-zinc-500">

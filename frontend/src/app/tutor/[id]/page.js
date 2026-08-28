@@ -1,3 +1,4 @@
+import Button from "@/components/Button";
 // MOCKED: real data comes from GET /tutor/:id -> tutor_profiles table
 const mockTutors = {
   t1: {
@@ -74,9 +75,12 @@ export default async function TutorProfilePage({ params }) {
             </p>
           )}
 
-          <button className="mt-6 w-full rounded-default bg-primary px-6 py-3 font-medium text-white hover:bg-green-700">
+                    <Button
+            className="mt-6 w-full"
+            onClick={() => alert("MOCKED: this would call POST /session/start and redirect to /session/[new-id]")}
+          >
             Book a Session
-          </button>
+          </Button>
         </div>
       </div>
     </main>

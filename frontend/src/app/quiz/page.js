@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Button from "@/components/Button";
 
 const questions = [
   { id: "q1", text: "I understand things better when I see a diagram or video rather than reading text.", dimension: "visual" },
@@ -72,17 +73,9 @@ export default function QuizPage() {
           ))}
         </div>
 
-        <button
-          onClick={handleSubmit}
-          disabled={!allAnswered}
-          className={
-            allAnswered
-              ? "mt-10 w-full rounded-default bg-primary px-6 py-3 font-medium text-white hover:bg-green-700"
-              : "mt-10 w-full rounded-default bg-zinc-300 px-6 py-3 font-medium text-white cursor-not-allowed"
-          }
-        >
+                <Button onClick={handleSubmit} disabled={!allAnswered} className="mt-10 w-full">
           See My Matches
-        </button>
+        </Button>
       </div>
     </main>
   );
