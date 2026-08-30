@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import Button from "@/components/Button";
 
 const questions = [
@@ -14,6 +16,10 @@ const questions = [
 
 export default function QuizPage() {
   const [answers, setAnswers] = useState({});
+  const { completeQuiz } = useAuth();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const isNewSignup = searchParams.get("new") === "true";
 
   function handleAnswer(questionId, value) {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
@@ -38,8 +44,9 @@ export default function QuizPage() {
         : 0.5;
     });
 
-    console.log("learning_style_vector:", learningStyleVector);
-    alert("Quiz submitted. Check the browser console for your learning style vector (backend not connected yet).");
+       console.log("learning_style_vector:", learningStyleVector);
+    completeQuiz();
+    router.push(`/dashboard/student?welcome=${isNewSignup ? "new" : "quiz-done"}`);
   }
 
   const allAnswered = questions.every((q) => answers[q.id] !== undefined);

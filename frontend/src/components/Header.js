@@ -1,10 +1,25 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Header() {
   const { user, logout } = useAuth();
+    const pathname = usePathname();
+  const isAuthPage = pathname === "/signup" || pathname === "/login";
+
+  if (isAuthPage) {
+    return (
+      <header className="border-b border-zinc-200 bg-white">
+        <div className="mx-auto flex max-w-6xl items-center px-6 py-4">
+          <Link href="/" className="text-xl font-semibold text-secondary">
+            PeerLink<span className="text-primary">AI</span>
+          </Link>
+        </div>
+      </header>
+    );
+  }
 
   return (
     <header className="sticky top-0 z-50 border-b border-zinc-200 bg-white/95 backdrop-blur">
