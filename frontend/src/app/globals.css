@@ -3,12 +3,10 @@
 :root {
   --background: #ffffff;
   --foreground: #0F172A;
-
   --color-primary: #EA580C;
   --color-secondary: #0F172A;
   --color-success: #22C55E;
   --color-warning: #F59E0B;
-
   --radius-default: 8px;
 }
 
@@ -31,4 +29,8 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+}
+
+button:not(:disabled){
+  cursor: pointer;
 }

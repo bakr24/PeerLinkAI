@@ -6,13 +6,18 @@ const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [hasTakenQuiz, setHasTakenQuiz] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     // MOCKED: real flow would validate a token with the backend on load
-    const stored = localStorage.getItem("peerlinkai_user");
-    if (stored) {
-      setUser(JSON.parse(stored));
+    const storedUser = localStorage.getItem("peerlinkai_user");
+    const storedQuiz = localStorage.getItem("peerlinkai_quiz_taken");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+    if (storedQuiz === "true") {
+      setHasTakenQuiz(true);
     }
     setLoading(false);
   }, []);
@@ -26,11 +31,18 @@ export function AuthProvider({ children }) {
 
   function logout() {
     setUser(null);
+    setHasTakenQuiz(false);
     localStorage.removeItem("peerlinkai_user");
+    localStorage.removeItem("peerlinkai_quiz_taken");
+  }
+
+  function completeQuiz() {
+    setHasTakenQuiz(true);
+    localStorage.setItem("peerlinkai_quiz_taken", "true");
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, hasTakenQuiz, login, logout, completeQuiz }}>
       {children}
     </AuthContext.Provider>
   );
