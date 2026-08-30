@@ -1,0 +1,4 @@
+scikit-learn>=1.4
+numpy>=1.26
+pydantic>=2.6
+pytest>=8.0
