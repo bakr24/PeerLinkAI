@@ -57,7 +57,32 @@ is the contract, `recommend.py` never needs to change.
 ## Tests
 
 ```
-cd ai-layer && python3 -m pytest test_recommend.py -v
+cd ai-layer && python3 -m pytest -v
 ```
-5 targeted tests: content-relevance ranking, style-match ranking,
-empty-list safety, `top_n` limiting, blank-query safety.
+11 tests total: 5 for recommendation ranking, 6 for quiz generation/grading.
+
+---
+
+# ai-layer — Quiz Generation & Grading Module
+
+## Public functions
+
+```python
+from quiz import generate_quiz, grade_quiz
+from quiz_models import QuizQuestion, QuizResult
+
+questions = generate_quiz(topic="calculus", quiz_type="post_session", num_questions=4)
+result = grade_quiz(questions, student_answers=[1, 0, 2, 1])
+```
+
+**`generate_quiz(topic, quiz_type="post_session", num_questions=4) -> list[QuizQuestion]`**
+Tries a real LLM call first (set `ANTHROPIC_API_KEY` as an environment variable to enable it). If the key is missing, the call times out, or the response can't be parsed as valid JSON, it **automatically falls back** to a small hand-written question bank (calculus, algebra, physics, plus a generic fallback for any other topic). Never raises, never returns an empty list.
+
+**`grade_quiz(questions, student_answers) -> QuizResult`**
+Fully deterministic, no LLM involved. Compares each answer index to `correct_index`, computes score, and flags `weak_topics` from the `topic` field of every question answered wrong. Handles missing/short answer lists gracefully — never raises `IndexError`.
+
+**`QuizResult`**: `score`, `total`, `passed` (60% threshold), `weak_topics: list[str]`
+
+## Demo-safety note
+
+Set `ANTHROPIC_API_KEY` before the demo to get real LLM-generated questions. If it's not set, or the API has any hiccup, the fallback bank kicks in silently — the quiz screen never breaks or shows empty, which matters more on demo day than which generator produced the questions.
