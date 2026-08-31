@@ -2,7 +2,7 @@
 
 An AI-powered educational matching platform — think Fiverr for tutoring, but where the AI is actually doing work: qualifying tutors, matching students by learning style (not just subject), and quizzing students after every session.
 
-Built for a 5-day hackathon by a 3-person team.
+Built by a 3-person team, one shared repository.
 
 ---
 
@@ -11,6 +11,26 @@ Built for a 5-day hackathon by a 3-person team.
 1. **Tutor qualification** — a tutor applies to teach a subject, takes an AI-generated qualifying quiz, and gets a "verified" badge on passing.
 2. **Learning-style-aware matching** — a student takes a short onboarding quiz (visual/practical/theoretical, pace, interaction), then searches for a subject. Results are ranked by both subject relevance *and* how well the tutor's teaching style fits the student — not just a keyword match.
 3. **Post-session quiz + adaptive feedback** — after a session, the student gets an AI-generated quick quiz on what was covered. Weak topics feed back into the student's learning profile, so the *next* recommendation is measurably better-informed.
+
+## System overview
+
+```
+Student                                          Tutor
+  │                                                 │
+  ├─ Takes learning-style quiz                      ├─ Applies to teach a subject
+  ├─ Searches for a subject                         ├─ Takes AI-generated qualifying quiz
+  ├─ Sees ranked tutors + "why this match"           └─ Gets verified on passing
+  ├─ Books a session with chosen tutor
+  ├─ Completes session
+  ├─ Takes AI-generated post-session quiz
+  └─ Weak topics feed back into future recommendations
+```
+
+The AI layer sits behind two calls the rest of the system depends on:
+`recommend_tutors()` (ranks tutors by subject relevance + learning-style fit) and
+`generate_quiz()` / `grade_quiz()` (post-session assessment, with adaptive feedback
+into the student's profile). Everything else — auth, routing, UI — is built around
+making those two calls real and visible.
 
 ## Why this counts as "AI doing real work"
 
@@ -61,9 +81,12 @@ Backend setup will be added once `feat/backend` lands — see `docs/API.md` for 
 
 ## Team & workflow
 
-- 3 contributors, 1 shared repo, feature branches per folder (`feat/frontend`, `feat/backend`, `feat/ai-layer`)
-- Built primarily using Qoder AI (shared account/instance across the team — see `docs/CREDIT_LOG.md` for usage tracking)
-- Full 5-day build plan, architecture decisions, and demo script are documented in `docs/ARCHITECTURE.md`
+- **3 contributors, 1 shared repo.** Work is split by folder, not by feature, so contributions don't collide:
+  - Frontend owner → `frontend/`
+  - Backend owner → `backend/`
+  - AI-layer owner → `ai-layer/`
+- Each person branches from `main` (`feat/frontend`, `feat/backend`, `feat/ai-layer`), opens a PR back into `main` when a piece is ready, and doesn't edit outside their own folder.
+- Shared contracts — the API shape, the database schema, and the overall architecture reasoning — live in `docs/`, not scattered across each person's code, so nobody has to guess what another folder expects.
 
 ## Docs
 
