@@ -6,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 
 export default function Header() {
   const { user, logout } = useAuth();
-    const pathname = usePathname();
+  const pathname = usePathname();
   const isAuthPage = pathname === "/signup" || pathname === "/login";
 
   if (isAuthPage) {
@@ -29,8 +29,20 @@ export default function Header() {
         </Link>
 
         <nav className="hidden items-center gap-8 sm:flex">
-                    {!user && (
+          {!user && (
             <>
+              <Link
+                href="/"
+                onClick={(e) => {
+                  if (pathname === "/") {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }
+                }}
+                className="text-sm font-medium text-zinc-600 hover:text-primary"
+              >
+                Home
+              </Link>
               <a href="/#about" className="text-sm font-medium text-zinc-600 hover:text-primary">
                 About
               </a>
@@ -48,17 +60,17 @@ export default function Header() {
 
           {user && (
             <>
+              <Link href={user.role === "tutor" ? "/dashboard/tutor" : "/dashboard/student"} className="text-sm font-medium text-zinc-600 hover:text-primary">
+                Dashboard
+              </Link>
               <Link href="/search" className="text-sm font-medium text-zinc-600 hover:text-primary">
                 Find a Tutor
               </Link>
               <Link href="/become-tutor" className="text-sm font-medium text-zinc-600 hover:text-primary">
                 Become a Tutor
               </Link>
-              <Link
-                href={user.role === "tutor" ? "/dashboard/tutor" : "/dashboard/student"}
-                className="text-sm font-medium text-zinc-600 hover:text-primary"
-              >
-                Dashboard
+              <Link href="/profile" className="text-sm font-medium text-zinc-600 hover:text-primary">
+                Profile
               </Link>
             </>
           )}

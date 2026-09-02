@@ -133,15 +133,23 @@ export default function SessionPage({ params }) {
             <p className="mt-2 text-zinc-600">
               You got {correctCount} out of {mockPostSessionQuiz.length} correct.
             </p>
-            <span
-              className={
-                passed
-                  ? "mt-4 inline-block rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-success"
-                  : "mt-4 inline-block rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-warning"
-              }
-            >
-              {passed ? "Pass" : "Needs Review"}
-            </span>
+            <div>
+              <span
+                className={
+                  passed
+                    ? "mt-4 inline-block rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-success"
+                    : "mt-4 inline-block rounded-full bg-amber-100 px-3 py-1 text-sm font-medium text-warning"
+                }
+              >
+                {passed ? "Pass" : "Needs Review"}
+              </span>
+            </div>
+
+            <div className="mt-8">
+              <Button href="/dashboard/student" className="w-full sm:w-auto">
+                Back to Dashboard
+              </Button>
+            </div>
           </div>
         )}
 
