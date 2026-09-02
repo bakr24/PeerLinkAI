@@ -18,7 +18,22 @@ export default function SearchPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
+      const params = new URLSearchParams({ q: query });
+
+      // If the student has taken the learning-style quiz, send their real
+      // vector so /search returns personalized results. Falls back to the
+      // backend's neutral defaults (0.5 each) if none is stored yet.
+      const storedStyle = localStorage.getItem("peerlinkai_learning_style");
+      if (storedStyle) {
+        const style = JSON.parse(storedStyle);
+        ["visual", "practical", "pace", "interaction"].forEach((dim) => {
+          if (typeof style[dim] === "number") {
+            params.set(dim, style[dim]);
+          }
+        });
+      }
+
+      const res = await fetch(`${API_URL}/search?${params.toString()}`);
       if (!res.ok) throw new Error(`Request failed: ${res.status}`);
       const data = await res.json();
       setTutors(data);

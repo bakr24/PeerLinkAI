@@ -44,7 +44,8 @@ export default function QuizPage() {
         : 0.5;
     });
 
-       console.log("learning_style_vector:", learningStyleVector);
+    // Persist so the search page can send it to /search for personalized matching
+    localStorage.setItem("peerlinkai_learning_style", JSON.stringify(learningStyleVector));
     completeQuiz();
     router.push(`/dashboard/student?welcome=${isNewSignup ? "new" : "quiz-done"}`);
   }
