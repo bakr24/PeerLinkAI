@@ -4,46 +4,32 @@ import { useState } from "react";
 import Link from "next/link";
 import Button from "@/components/Button";
 
-// MOCKED: real data comes from GET /search?q=<query>&student_id=... -> recommend_tutors()
-const mockTutors = [
-  {
-    id: "t1",
-    name: "Sarah Ahmed",
-    subject: "Calculus & Algebra",
-    verified: true,
-    bio: "5 years teaching high school and university-level math with a hands-on, example-first approach.",
-    matchScore: 0.91,
-    matchReason: "Matches your practical learning style",
-  },
-  {
-    id: "t2",
-    name: "Bilal Khan",
-    subject: "Calculus, Statistics",
-    verified: true,
-    bio: "Explains concepts visually using diagrams and step-by-step breakdowns.",
-    matchScore: 0.86,
-    matchReason: "Strong match for 'calculus' based on tutor expertise",
-  },
-  {
-    id: "t3",
-    name: "Ayesha Raza",
-    subject: "Algebra, Geometry",
-    verified: false,
-    bio: "Patient tutor focused on building fundamentals through interactive Q&A.",
-    matchScore: 0.78,
-    matchReason: "Matches your interaction-based learning style",
-  },
-];
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
   const [hasSearched, setHasSearched] = useState(false);
+  const [tutors, setTutors] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  function handleSearch(e) {
+  async function handleSearch(e) {
     e.preventDefault();
-    // MOCKED: real flow calls GET /search?q=<query>&student_id=...
-    console.log("search_query:", query);
-    setHasSearched(true);
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`${API_URL}/search?q=${encodeURIComponent(query)}`);
+      if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+      const data = await res.json();
+      setTutors(data);
+      setHasSearched(true);
+    } catch (err) {
+      setError("Couldn't reach the matching service. Is the backend running?");
+      setTutors([]);
+      setHasSearched(true);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -60,18 +46,22 @@ export default function SearchPage() {
             placeholder="e.g. Calculus, need visual step-by-step help"
             className="flex-1 rounded-default border border-zinc-300 px-4 py-3"
           />
-                    <Button type="submit" disabled={!query}>
-            Search
+                    <Button type="submit" disabled={!query || loading}>
+            {loading ? "Searching..." : "Search"}
           </Button>
         </form>
 
         {hasSearched && (
           <div className="mt-10 flex flex-col gap-4">
-            <p className="text-sm text-zinc-500">
-              Showing {mockTutors.length} results for "{query}"
-            </p>
+            {error ? (
+              <p className="text-sm text-red-500">{error}</p>
+            ) : (
+              <p className="text-sm text-zinc-500">
+                Showing {tutors.length} results for "{query}"
+              </p>
+            )}
 
-            {mockTutors.map((tutor) => (
+            {tutors.map((tutor) => (
   <Link key={tutor.id} href={`/tutor/${tutor.id}`} className="block rounded-default border border-zinc-200 p-5 hover:border-primary transition-colors">
     
     
