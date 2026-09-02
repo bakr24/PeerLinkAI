@@ -5,21 +5,54 @@ import Button from "@/components/Button";
 
 const subjects = ["Mathematics", "Physics", "Computer Science", "English", "Chemistry"];
 
-// MOCKED: these will come from POST /tutor/apply -> generate_quiz() once ai-layer is ready
-const mockQuizQuestions = [
+// MOCKED: these will come from POST /tutor/apply -> generate_quiz() once ai-layer is connected
+const qualificationQuizzes = {
+  "Computer Science": [
+    {
+      id: "cs-tq1",
+      question: "What is the time complexity of searching for a key in a balanced binary search tree?",
+      options: ["O(1)", "O(log n)", "O(n)", "O(n log n)"],
+      correct_index: 1,
+      topic: "data structures",
+    },
+    {
+      id: "cs-tq2",
+      question: "What is the worst-case time complexity of quicksort?",
+      options: ["O(log n)", "O(n)", "O(n log n)", "O(n^2)"],
+      correct_index: 3,
+      topic: "algorithms",
+    },
+    {
+      id: "cs-tq3",
+      question: "Which condition is required for Dijkstra's shortest-path algorithm to work correctly?",
+      options: ["The graph must be complete", "All edge weights must be non-negative", "The graph must be directed", "Every node must have two edges"],
+      correct_index: 1,
+      topic: "graph algorithms",
+    },
+    {
+      id: "cs-tq4",
+      question: "Why is naive recursive Fibonacci exponential in time?",
+      options: ["It sorts the input repeatedly", "It recomputes the same subproblems", "It uses too much disk space", "It only works with negative numbers"],
+      correct_index: 1,
+      topic: "dynamic programming",
+    },
+  ],
+};
+
+const fallbackQuizQuestions = [
   {
     id: "mq1",
-    question: "Placeholder: This question will be AI-generated based on the chosen subject.",
+    question: "Subject-specific questions will be available soon.",
     options: ["Option A", "Option B", "Option C", "Option D"],
   },
   {
     id: "mq2",
-    question: "Placeholder: Another subject-specific competency question goes here.",
+    question: "This qualification question will be generated for the selected subject.",
     options: ["Option A", "Option B", "Option C", "Option D"],
   },
   {
     id: "mq3",
-    question: "Placeholder: A third generated question would appear here.",
+    question: "A third subject-specific competency question will appear here.",
     options: ["Option A", "Option B", "Option C", "Option D"],
   },
 ];
@@ -29,6 +62,7 @@ export default function BecomeTutorPage() {
   const [subject, setSubject] = useState("");
   const [bio, setBio] = useState("");
   const [answers, setAnswers] = useState({});
+  const quizQuestions = qualificationQuizzes[subject] ?? fallbackQuizQuestions;
 
   function handleApply() {
     // MOCKED: real flow calls POST /tutor/apply { subject_id } -> triggers generate_quiz()
@@ -36,8 +70,8 @@ export default function BecomeTutorPage() {
     setStep("quiz");
   }
 
-  function handleAnswer(questionId, option) {
-    setAnswers((prev) => ({ ...prev, [questionId]: option }));
+  function handleAnswer(questionId, optionIndex) {
+    setAnswers((prev) => ({ ...prev, [questionId]: optionIndex }));
   }
 
   function handleSubmitQuiz() {
@@ -46,7 +80,7 @@ export default function BecomeTutorPage() {
     setStep("submitted");
   }
 
-  const allAnswered = mockQuizQuestions.every((q) => answers[q.id] !== undefined);
+  const allAnswered = quizQuestions.every((q) => answers[q.id] !== undefined);
 
   return (
     <main className="min-h-screen bg-background px-6 py-16">
@@ -92,16 +126,16 @@ export default function BecomeTutorPage() {
             </p>
 
             <div className="flex flex-col gap-6">
-              {mockQuizQuestions.map((q) => (
+              {quizQuestions.map((q) => (
                 <div key={q.id} className="rounded-default border border-zinc-200 p-5">
                   <p className="font-medium text-secondary">{q.question}</p>
                   <div className="mt-4 flex flex-col gap-2">
-                    {q.options.map((opt) => (
+                    {q.options.map((opt, index) => (
                       <button
                         key={opt}
-                        onClick={() => handleAnswer(q.id, opt)}
+                        onClick={() => handleAnswer(q.id, index)}
                         className={
-                          answers[q.id] === opt
+                          answers[q.id] === index
                             ? "text-left rounded-default border-2 border-primary bg-green-50 px-4 py-2"
                             : "text-left rounded-default border border-zinc-300 px-4 py-2 hover:border-primary"
                         }
