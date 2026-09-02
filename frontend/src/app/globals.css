@@ -3,11 +3,21 @@
 :root {
   --background: #ffffff;
   --foreground: #0F172A;
+
   --color-primary: #EA580C;
   --color-secondary: #0F172A;
   --color-success: #22C55E;
   --color-warning: #F59E0B;
+
   --radius-default: 8px;
+}
+
+[data-theme="dark"] {
+  --background: #0F172A;
+  --foreground: #F1F5F9;
+
+  --color-primary: #FB923C;
+  --color-secondary: #F1F5F9;
 }
 
 @theme inline {
@@ -25,12 +35,13 @@ html {
   scroll-behavior: smooth;
 }
 
+button:not(:disabled) {
+  cursor: pointer;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
-}
-
-button:not(:disabled){
-  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }

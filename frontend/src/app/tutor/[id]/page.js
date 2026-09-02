@@ -1,88 +1,73 @@
+"use client";
+
+import { use } from "react";
+import Link from "next/link";
 import Button from "@/components/Button";
-// MOCKED: real data comes from GET /tutor/:id -> tutor_profiles table
+
+// Mock data array or object (adjust if your file stores this differently)
 const mockTutors = {
-  t1: {
-    id: "t1",
+  1: {
+    name: "Alex Rivera",
+    subjects: ["React", "JavaScript", "Frontend Development"],
+    bio: "Full-stack developer with 4 years of experience building modern React and Vite web apps.",
+    matchScore: "94%",
+    verified: true,
+  },
+  2: {
     name: "Sarah Ahmed",
-    subject: "Calculus & Algebra",
+    subjects: ["Calculus", "Algebra"],
+    bio: "5 years teaching high school and university-level math with a hands-on approach.",
+    matchScore: "91%",
     verified: true,
-    bio: "5 years teaching high school and university-level math with a hands-on, example-first approach. I focus on building intuition through real examples before introducing formal notation.",
-    teachingStyleTags: ["Practical", "Patient", "Example-driven"],
-    quizScore: 92,
   },
-  t2: {
-    id: "t2",
+  3: {
     name: "Bilal Khan",
-    subject: "Calculus, Statistics",
+    subjects: ["Calculus", "Statistics"],
+    bio: "Explains concepts visually using diagrams and step-by-step breakdowns.",
+    matchScore: "86%",
     verified: true,
-    bio: "Explains concepts visually using diagrams and step-by-step breakdowns. Great for students who get lost in dense textbook explanations.",
-    teachingStyleTags: ["Visual", "Structured", "Step-by-step"],
-    quizScore: 88,
-  },
-  t3: {
-    id: "t3",
-    name: "Ayesha Raza",
-    subject: "Algebra, Geometry",
-    verified: false,
-    bio: "Patient tutor focused on building fundamentals through interactive Q&A.",
-    teachingStyleTags: ["Interactive", "Fundamentals-first"],
-    quizScore: null,
-  },
+  }
 };
 
-export default async function TutorProfilePage({ params }) {
-  const { id } = await params;
-  const tutor = mockTutors[id];
-
-  if (!tutor) {
-    return (
-      <main className="min-h-screen bg-background px-6 py-16">
-        <div className="mx-auto max-w-2xl text-center">
-          <h1 className="text-2xl font-semibold text-secondary">Tutor Not Found</h1>
-          <p className="mt-2 text-zinc-600">This tutor profile does not exist.</p>
-        </div>
-      </main>
-    );
-  }
+export default function TutorProfilePage({ params }) {
+  const unwrappedParams = use(params);
+  const id = unwrappedParams.id;
+  const tutor = mockTutors[id] || mockTutors[1]; // Fallback to 1 if not found
 
   return (
-    <main className="min-h-screen bg-background px-6 py-16">
-      <div className="mx-auto max-w-2xl">
-        <div className="rounded-default border border-zinc-200 p-6">
-          <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-semibold text-secondary">{tutor.name}</h1>
-            {tutor.verified && (
-              <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-success">
-                Verified
-              </span>
-            )}
-          </div>
-          <p className="text-zinc-500 mt-1">{tutor.subject}</p>
+    <div className="mx-auto max-w-4xl px-6 py-12">
+      <div className="mb-6">
+        <Link href="/search" className="text-sm font-medium text-primary hover:underline">
+          ← Back to Search Results
+        </Link>
+      </div>
 
-          <p className="mt-4 text-zinc-600">{tutor.bio}</p>
-
-          <div className="mt-4 flex flex-wrap gap-2">
-            {tutor.teachingStyleTags.map((tag) => (
-              <span key={tag} className="rounded-full bg-zinc-100 px-3 py-1 text-sm text-secondary">
-                {tag}
-              </span>
-            ))}
-          </div>
-
-          {tutor.quizScore !== null && (
-            <p className="mt-4 text-sm text-zinc-500">
-              Qualification quiz score: <span className="font-medium text-secondary">{tutor.quizScore}%</span>
-            </p>
+      <div className="rounded-default border border-zinc-200 bg-white p-8 shadow-sm">
+        <div className="flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-secondary">{tutor.name}</h1>
+          {tutor.verified && (
+            <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700">
+              Verified Tutor
+            </span>
           )}
+        </div>
 
-                    <Button
-            className="mt-6 w-full"
-            onClick={() => alert("MOCKED: this would call POST /session/start and redirect to /session/[new-id]")}
-          >
+        <div className="mt-4 flex flex-wrap gap-2">
+          {tutor.subjects.map((sub, idx) => (
+            <span key={idx} className="rounded-default bg-zinc-100 px-3 py-1 text-sm font-medium text-zinc-600">
+              {sub}
+            </span>
+          ))}
+        </div>
+
+        <p className="mt-6 text-zinc-700 leading-relaxed">{tutor.bio}</p>
+
+        <div className="mt-8 pt-6 border-t border-zinc-100">
+          <Button href="/session/1" className="w-full">
             Book a Session
           </Button>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

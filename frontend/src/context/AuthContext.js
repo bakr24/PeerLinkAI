@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 const AuthContext = createContext(null);
 
@@ -8,6 +9,7 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [hasTakenQuiz, setHasTakenQuiz] = useState(false);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     // MOCKED: real flow would validate a token with the backend on load
@@ -34,6 +36,7 @@ export function AuthProvider({ children }) {
     setHasTakenQuiz(false);
     localStorage.removeItem("peerlinkai_user");
     localStorage.removeItem("peerlinkai_quiz_taken");
+    router.push("/"); // <--- Instantly redirects user back to the public home page
   }
 
   function completeQuiz() {
