@@ -59,7 +59,7 @@ is the contract, `recommend.py` never needs to change.
 ```
 cd ai-layer && python3 -m pytest -v
 ```
-17 tests total: 5 for recommendation ranking, 6 for quiz generation/grading, 6 for adaptive feedback.
+18 tests total: 5 for recommendation ranking, 7 for quiz generation/grading, 6 for adaptive feedback.
 
 ---
 

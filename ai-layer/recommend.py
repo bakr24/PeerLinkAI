@@ -33,24 +33,52 @@ def _style_score(student_style: LearningStyleVector, tutor_style: LearningStyleV
     return max(0.0, min(1.0, score))
 
 
-def _dominant_style_trait(student_style: LearningStyleVector) -> str:
-    traits = {
-        "visual": student_style.visual,
-        "hands-on, practical": student_style.practical,
-        "fast-paced": student_style.pace,
-        "interactive, Q&A-driven": student_style.interaction,
-    }
-    return max(traits, key=traits.get)
+_STYLE_DIMENSIONS = [
+    ("visual", "text-based, conceptual"),
+    ("hands-on, practical", "theory-focused"),
+    ("fast-paced", "slow-paced, thorough"),
+    ("interactive, Q&A-driven", "independent, self-paced"),
+]
+
+
+def _is_default_style(style: LearningStyleVector, tolerance: float = 0.1) -> bool:
+    return all(abs(v - 0.5) <= tolerance for v in style.as_tuple())
+
+
+def _best_aligned_trait(student_style: LearningStyleVector, tutor_style: LearningStyleVector) -> str | None:
+    """Return a human-readable trait for the dimension where student and tutor align best."""
+    student = student_style.as_tuple()
+    tutor = tutor_style.as_tuple()
+
+    best_dim = None
+    best_diff = float("inf")
+    for i, (high_label, low_label) in enumerate(_STYLE_DIMENSIONS):
+        diff = abs(student[i] - tutor[i])
+        if diff < best_diff:
+            best_diff = diff
+            best_dim = high_label if tutor[i] >= 0.5 else low_label
+
+    # Only claim alignment if the styles are actually close and not completely neutral.
+    if best_diff > 0.4 or _is_default_style(student_style):
+        return None
+    return best_dim
 
 
 def _build_reason(content_score: float, style_score: float, query: str, tutor: TutorProfile,
                    student_style: LearningStyleVector) -> str:
-    if style_score > content_score:
-        trait = _dominant_style_trait(student_style)
-        return f"Matches your {trait} learning style"
-    if query.strip():
-        return f"Strong match for '{query.strip()}' based on {tutor.name}'s expertise in {tutor.subject}"
-    return f"Recommended based on expertise in {tutor.subject}"
+    # Strong content match gets a subject/expertise reason.
+    if content_score >= 0.5 or content_score >= style_score:
+        if query.strip():
+            return f"Strong match for '{query.strip()}' based on {tutor.name}'s expertise in {tutor.subject}"
+        return f"Recommended based on {tutor.name}'s expertise in {tutor.subject}"
+
+    # Style-led reason, but only if there is real alignment and the student is not a default vector.
+    aligned_trait = _best_aligned_trait(student_style, tutor.teaching_style)
+    if aligned_trait:
+        return f"Great style fit: {tutor.name} teaches in a {aligned_trait} way that matches your preference"
+
+    # Safe fallback.
+    return f"Recommended based on {tutor.name}'s expertise in {tutor.subject}"
 
 
 def recommend_tutors(
