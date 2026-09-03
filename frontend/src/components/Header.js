@@ -43,18 +43,18 @@ export default function Header() {
               >
                 Home
               </Link>
-              <a href="/#about" className="text-sm font-medium text-zinc-600 hover:text-primary">
+              <Link href="/#about" className="text-sm font-medium text-zinc-600 hover:text-primary">
                 About
-              </a>
-              <a href="/#why-choose-us" className="text-sm font-medium text-zinc-600 hover:text-primary">
+              </Link>
+              <Link href="/#why-choose-us" className="text-sm font-medium text-zinc-600 hover:text-primary">
                 Why Choose Us
-              </a>
-              <a href="/#how-it-works" className="text-sm font-medium text-zinc-600 hover:text-primary">
+              </Link>
+              <Link href="/#how-it-works" className="text-sm font-medium text-zinc-600 hover:text-primary">
                 How It Works
-              </a>
-              <a href="/#contact" className="text-sm font-medium text-zinc-600 hover:text-primary">
+              </Link>
+              <Link href="/#contact" className="text-sm font-medium text-zinc-600 hover:text-primary">
                 Contact
-              </a>
+              </Link>
             </>
           )}
 

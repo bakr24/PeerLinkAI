@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import Button from "@/components/Button";
@@ -15,6 +15,14 @@ const questions = [
 ];
 
 export default function QuizPage() {
+  return (
+    <Suspense fallback={null}>
+      <QuizPageContent />
+    </Suspense>
+  );
+}
+
+function QuizPageContent() {
   const [answers, setAnswers] = useState({});
   const { completeQuiz } = useAuth();
   const router = useRouter();
@@ -81,7 +89,7 @@ export default function QuizPage() {
           ))}
         </div>
 
-                <Button onClick={handleSubmit} disabled={!allAnswered} className="mt-10 w-full">
+        <Button onClick={handleSubmit} disabled={!allAnswered} className="mt-10 w-full">
           See My Matches
         </Button>
       </div>
