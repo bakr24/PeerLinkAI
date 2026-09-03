@@ -1,5 +1,12 @@
+import pytest
+
 from quiz import generate_quiz, grade_quiz
 from quiz_models import QuizQuestion
+
+
+def test_quiz_question_rejects_out_of_range_correct_index():
+    with pytest.raises(ValueError):
+        QuizQuestion(question="Q1", options=["a", "b"], correct_index=5, topic="t1")
 
 
 def test_generate_quiz_returns_requested_count_without_api_key():

@@ -59,7 +59,7 @@ is the contract, `recommend.py` never needs to change.
 ```
 cd ai-layer && python3 -m pytest -v
 ```
-11 tests total: 5 for recommendation ranking, 6 for quiz generation/grading.
+17 tests total: 5 for recommendation ranking, 6 for quiz generation/grading, 6 for adaptive feedback.
 
 ---
 
@@ -76,7 +76,7 @@ result = grade_quiz(questions, student_answers=[1, 0, 2, 1])
 ```
 
 **`generate_quiz(topic, quiz_type="post_session", num_questions=4) -> list[QuizQuestion]`**
-Tries a real LLM call first (set `ANTHROPIC_API_KEY` as an environment variable to enable it). If the key is missing, the call times out, or the response can't be parsed as valid JSON, it **automatically falls back** to a small hand-written question bank (calculus, algebra, physics, plus a generic fallback for any other topic). Never raises, never returns an empty list.
+Tries a real LLM call first. Set `ANTHROPIC_API_KEY` as an environment variable to enable it. You can also override the model with `ANTHROPIC_MODEL` (defaults to `claude-3-5-sonnet-20241022`). If the key is missing, the call times out, or the response can't be parsed as valid JSON, it **automatically falls back** to a small hand-written question bank (calculus, algebra, physics, plus a generic fallback for any other topic). Never raises, never returns an empty list.
 
 **`grade_quiz(questions, student_answers) -> QuizResult`**
 Fully deterministic, no LLM involved. Compares each answer index to `correct_index`, computes score, and flags `weak_topics` from the `topic` field of every question answered wrong. Handles missing/short answer lists gracefully — never raises `IndexError`.
