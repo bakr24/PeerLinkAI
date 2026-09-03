@@ -1,11 +1,19 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
 export default function TutorDashboard() {
+  return (
+    <Suspense fallback={null}>
+      <TutorDashboardContent />
+    </Suspense>
+  );
+}
+
+function TutorDashboardContent() {
   const { user, loading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -64,7 +72,7 @@ export default function TutorDashboard() {
         <div className="mt-8 rounded-default border border-zinc-200 bg-white p-6">
           <h2 className="font-semibold text-secondary text-lg">Your Sessions</h2>
           <p className="mt-2 text-sm text-zinc-600">
-            No session requests yet. Once you're verified, students will be able to book you here.
+            No session requests yet. Once you&apos;re verified, students will be able to book you here.
           </p>
         </div>
       </div>

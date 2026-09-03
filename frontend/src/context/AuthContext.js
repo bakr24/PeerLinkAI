@@ -11,6 +11,8 @@ export function AuthProvider({ children }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+
+  
   useEffect(() => {
     // MOCKED: real flow would validate a token with the backend on load
     const storedUser = localStorage.getItem("peerlinkai_user");
@@ -23,6 +25,7 @@ export function AuthProvider({ children }) {
     }
     setLoading(false);
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   function login({ name, email, role }) {
     // MOCKED: real flow calls POST /auth/login and stores a real token
@@ -36,7 +39,7 @@ export function AuthProvider({ children }) {
     setHasTakenQuiz(false);
     localStorage.removeItem("peerlinkai_user");
     localStorage.removeItem("peerlinkai_quiz_taken");
-    router.push("/"); // <--- Instantly redirects user back to the public home page
+    router.push("/");
   }
 
   function completeQuiz() {

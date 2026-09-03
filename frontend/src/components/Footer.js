@@ -11,7 +11,7 @@ export default function Footer() {
 
   // Hide the footer completely if the user is logged in OR on an app route
   const isAppPage = pathname.startsWith("/search") || pathname.startsWith("/dashboard") || pathname.startsWith("/quiz") || pathname.startsWith("/session");
-  
+
   if (user || isAppPage) {
     return null;
   }
@@ -49,9 +49,9 @@ export default function Footer() {
         <div>
           <h4 className="font-semibold text-secondary mb-4 text-sm uppercase tracking-wider">Company</h4>
           <ul className="space-y-2 text-sm">
-            <li><a href="/#about" className="hover:text-primary transition-colors">About Us</a></li>
-            <li><a href="/#why-choose-us" className="hover:text-primary transition-colors">Why Choose Us</a></li>
-            <li><a href="/#how-it-works" className="hover:text-primary transition-colors">How It Works</a></li>
+            <li><Link href="/#about" className="hover:text-primary transition-colors">About Us</Link></li>
+            <li><Link href="/#why-choose-us" className="hover:text-primary transition-colors">Why Choose Us</Link></li>
+            <li><Link href="/#how-it-works" className="hover:text-primary transition-colors">How It Works</Link></li>
           </ul>
         </div>
 
@@ -59,7 +59,7 @@ export default function Footer() {
         <div>
           <h4 className="font-semibold text-secondary mb-4 text-sm uppercase tracking-wider">Support</h4>
           <ul className="space-y-2 text-sm">
-            <li><a href="/#contact" className="hover:text-primary transition-colors">Contact Us</a></li>
+            <li><Link href="/#contact" className="hover:text-primary transition-colors">Contact Us</Link></li>
             <li><Link href="/login" className="hover:text-primary transition-colors">Log In</Link></li>
             <li><Link href="/signup" className="hover:text-primary transition-colors">Sign Up</Link></li>
           </ul>
@@ -69,7 +69,7 @@ export default function Footer() {
       {/* Bottom Bar with Copyright & Back to Top */}
       <div className="mx-auto max-w-6xl px-6 border-t border-zinc-200 pt-6 flex items-center justify-between">
         <p className="text-sm text-zinc-500">© 2026 PeerLinkAI. All rights reserved.</p>
-        
+
         <button
           onClick={goHome}
           className="flex h-10 w-10 items-center justify-center rounded-default border border-zinc-300 bg-white hover:bg-zinc-50 transition-colors shadow-sm"

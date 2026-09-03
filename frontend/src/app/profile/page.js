@@ -1,12 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useAuth } from "@/context/AuthContext";
 import Button from "@/components/Button";
 
 export default function ProfilePage() {
   const { user } = useAuth();
-  
+
   // Mock profile state seeded with user data or defaults
   const [profile, setProfile] = useState({
     name: user?.name || "Student User",
@@ -53,9 +54,11 @@ export default function ProfilePage() {
 
       <div className="rounded-default border border-zinc-200 bg-white p-8 shadow-sm">
         <div className="flex flex-col md:flex-row items-center gap-8 pb-8 border-b border-zinc-100">
-          <img
+          <Image
             src={profile.avatar}
             alt="Profile Avatar"
+            width={96}
+            height={96}
             className="h-24 w-24 rounded-full bg-orange-100 border-2 border-primary p-1 shadow-sm"
           />
           <div className="text-center md:text-left">
