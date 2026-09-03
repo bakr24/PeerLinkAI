@@ -9,8 +9,7 @@ import os
 import urllib.request
 import urllib.error
 
-ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
-ANTHROPIC_MODEL = os.environ.get("ANTHROPIC_MODEL", "claude-3-5-sonnet-20241022")
+DEFAULT_ANTHROPIC_MODEL = "claude-3-5-sonnet-20241022"
 ANTHROPIC_URL = "https://api.anthropic.com/v1/messages"
 TIMEOUT_SECONDS = 10
 
@@ -19,12 +18,17 @@ def call_llm(prompt: str, max_tokens: int = 1000) -> str | None:
     """
     Sends `prompt` to the configured LLM and returns the text response,
     or None if no key is set or the call fails for any reason.
+
+    Env vars are read inside this function (not at import time) so that
+    callers can load a .env file before the first LLM call.
     """
-    if not ANTHROPIC_API_KEY:
+    api_key = os.environ.get("ANTHROPIC_API_KEY", "").strip()
+    model = os.environ.get("ANTHROPIC_MODEL", DEFAULT_ANTHROPIC_MODEL).strip() or DEFAULT_ANTHROPIC_MODEL
+    if not api_key:
         return None
 
     body = json.dumps({
-        "model": ANTHROPIC_MODEL,
+        "model": model,
         "max_tokens": max_tokens,
         "messages": [{"role": "user", "content": prompt}],
     }).encode("utf-8")
@@ -34,7 +38,7 @@ def call_llm(prompt: str, max_tokens: int = 1000) -> str | None:
         data=body,
         headers={
             "Content-Type": "application/json",
-            "x-api-key": ANTHROPIC_API_KEY,
+            "x-api-key": api_key,
             "anthropic-version": "2023-06-01",
         },
         method="POST",

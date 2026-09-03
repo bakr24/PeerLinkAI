@@ -41,8 +41,10 @@ _FALLBACK_BANK: dict[str, list[dict]] = {
 }
 
 _GENERIC_FALLBACK = [
-    {"question": "How confident do you feel about {topic} after this session?", "options": ["Very confident", "Somewhat confident", "Still unsure", "Need another session"], "correct_index": 0, "topic": "self-assessment"},
-    {"question": "Which part of {topic} would you like to review again?", "options": ["The introduction", "The core concept", "The examples", "None, all clear"], "correct_index": 3, "topic": "self-assessment"},
+    {"question": "What is the first step when approaching a new problem in {topic}?", "options": ["Memorize formulas", "Identify what you know and what you need", "Guess an answer", "Skip to the hardest part"], "correct_index": 1, "topic": "{topic}"},
+    {"question": "Which practice habit helps most when studying {topic}?", "options": ["Only reading notes", "Solving varied problems regularly", "Waiting until the night before", "Avoiding mistakes"], "correct_index": 1, "topic": "{topic}"},
+    {"question": "When stuck on a {topic} question, the best move is to:", "options": ["Give up immediately", "Break it into smaller parts", "Copy someone else's work", "Change the subject"], "correct_index": 1, "topic": "{topic}"},
+    {"question": "A strong answer in {topic} usually includes:", "options": ["Only the final number", "Clear reasoning and units", "A guess with no work", "Random keywords"], "correct_index": 1, "topic": "{topic}"},
 ]
 
 
@@ -58,14 +60,22 @@ def _fallback_questions(topic: str, num_questions: int) -> list[QuizQuestion]:
 
 def _parse_llm_questions(raw_text: str) -> list[QuizQuestion] | None:
     """Extracts a JSON array of questions from the LLM's raw text response."""
-    match = re.search(r"\[.*\]", raw_text, re.DOTALL)
-    if not match:
-        return None
-    try:
-        items = json.loads(match.group(0))
-        return [QuizQuestion(**item) for item in items]
-    except (json.JSONDecodeError, TypeError, ValueError):
-        return None
+    # Try a non-greedy match first; if that fails, try to raw-decode from the first '['.
+    match = re.search(r"\[.*?\]", raw_text, re.DOTALL)
+    candidates = [match.group(0)] if match else []
+
+    first_bracket = raw_text.find("[")
+    if first_bracket != -1:
+        candidates.append(raw_text[first_bracket:])
+
+    for candidate in candidates:
+        try:
+            items = json.loads(candidate)
+            if isinstance(items, list) and items:
+                return [QuizQuestion(**item) for item in items]
+        except (json.JSONDecodeError, TypeError, ValueError):
+            continue
+    return None
 
 
 def generate_quiz(topic: str, quiz_type: str = "post_session", num_questions: int = 4) -> list[QuizQuestion]:
