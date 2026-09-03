@@ -1,16 +1,17 @@
 """
 Minimal backend bridge — proves the AI layer works live, end to end.
 
-SCOPE: this is deliberately small. It implements ONE real endpoint
-(/search) that calls ai-layer/recommend.py's recommend_tutors() against
-a small seeded tutor list. It does NOT implement auth, a database, or
-the other endpoints in docs/API.md — those are P3's full backend build.
+SCOPE: this is deliberately small. It implements real endpoints
+(/search, /tutor/apply, /tutor/quiz/{quiz_id}/submit) that call into
+ai-layer/recommend.py and ai-layer/quiz.py. It does NOT implement auth,
+a database, or the other endpoints in docs/API.md — those are P3's full
+backend build.
 
 This exists to unblock the demo: without it, the frontend has no real
 AI call to show, only a hardcoded mock array. This file is intentionally
 easy to delete/replace once the real backend (with a database, auth,
-etc.) is ready — the only contract that matters is the /search response
-shape, which already matches what frontend/src/app/search/page.js expects.
+etc.) is ready — the only contracts that matter are the response shapes,
+which already match what the frontend expects.
 
 Run locally:
     cd backend
@@ -18,10 +19,12 @@ Run locally:
     uvicorn main:app --reload --port 8000
 """
 import sys
+import uuid
 from pathlib import Path
 
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel, Field
 
 # ai-layer/ is a sibling folder with a hyphenated name, so it can't be
 # imported as a normal Python package — add it to sys.path directly.
@@ -29,7 +32,9 @@ AI_LAYER_PATH = Path(__file__).resolve().parent.parent / "ai-layer"
 sys.path.insert(0, str(AI_LAYER_PATH))
 
 from recommend import recommend_tutors  # noqa: E402
+from quiz import generate_quiz, grade_quiz  # noqa: E402
 from models import LearningStyleVector, StudentProfile, TutorProfile  # noqa: E402
+from quiz_models import QuizQuestion  # noqa: E402
 
 app = FastAPI(title="PeerLinkAI — minimal demo backend")
 
@@ -88,10 +93,83 @@ def _to_tutor_profile(d: dict) -> TutorProfile:
 SEED_TUTORS = [_to_tutor_profile(d) for d in SEED_TUTORS_DATA]
 SEED_BY_ID = {d["tutor_id"]: d for d in SEED_TUTORS_DATA}
 
+# --- Tutor verification quiz state (in-memory, demo only) ---
+VERIFICATION_QUIZZES: dict[str, list[QuizQuestion]] = {}
+
+
+class TutorApplyRequest(BaseModel):
+    subject: str = Field(..., min_length=1, description="Subject the tutor wants to teach")
+    bio: str = Field(..., min_length=1, description="Short tutor bio")
+
+
+class TutorApplyResponse(BaseModel):
+    quiz_id: str
+    subject: str
+    questions: list[dict]
+
+
+class TutorQuizSubmitRequest(BaseModel):
+    answers: list[int] = Field(..., min_length=1, description="List of selected option indices")
+
+
+class TutorQuizSubmitResponse(BaseModel):
+    score: int
+    total: int
+    passed: bool
+    verified: bool
+    weak_topics: list[str]
+
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+@app.post("/tutor/apply", response_model=TutorApplyResponse)
+def tutor_apply(payload: TutorApplyRequest):
+    """
+    Generates a subject-specific competency quiz for a tutor applicant.
+    Stores the quiz in memory so answers can be submitted later.
+    """
+    questions = generate_quiz(
+        topic=payload.subject,
+        quiz_type="tutor_verification",
+        num_questions=3,
+    )
+    quiz_id = str(uuid.uuid4())
+    VERIFICATION_QUIZZES[quiz_id] = questions
+
+    return TutorApplyResponse(
+        quiz_id=quiz_id,
+        subject=payload.subject,
+        questions=[
+            {
+                "id": f"{quiz_id}-q{i}",
+                "question": q.question,
+                "options": q.options,
+            }
+            for i, q in enumerate(questions)
+        ],
+    )
+
+
+@app.post("/tutor/quiz/{quiz_id}/submit", response_model=TutorQuizSubmitResponse)
+def tutor_quiz_submit(quiz_id: str, payload: TutorQuizSubmitRequest):
+    """
+    Grades a submitted tutor verification quiz and returns pass/fail.
+    """
+    questions = VERIFICATION_QUIZZES.get(quiz_id)
+    if questions is None:
+        raise HTTPException(status_code=404, detail="Quiz not found")
+
+    result = grade_quiz(questions, payload.answers)
+    return TutorQuizSubmitResponse(
+        score=result.score,
+        total=result.total,
+        passed=result.passed,
+        verified=result.passed,
+        weak_topics=result.weak_topics,
+    )
 
 
 @app.get("/search")
